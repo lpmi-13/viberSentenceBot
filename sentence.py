@@ -1,4 +1,6 @@
 import os
+import requests
+
 
 from flask import Flask, request, Response
 from viberbot import Api
@@ -23,12 +25,16 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 bot_configuration = BotConfiguration(
-    name='TestyMcBot',
-    avatar='https://cdn1.iconfinder.com/data/icons/ninja-things-1/1772/ninja-simple-512.png',
-    auth_token=os.environ['VIBER_TOKEN']
+    name='Sentencebot',
+    avatar='http://cliparting.com/wp-content/uploads/2016/09/Robot-free-to-use-clipart-2.png'
+    auth_token=os.environ['VIBER_SENTENCE_TOKEN']
 )
 
 viber = Api(bot_configuration)
+
+response = requests.get('https://micromaterials.org/api/sentence/modal?count=10&max-words=100&skip=50', headers={'Accept': 'application/json'})
+
+sentences = response.text
 
 keyboardResponse = {
     "Type": "keyboard",
@@ -70,12 +76,11 @@ def incoming():
     viber_request = viber.parse_request(request.get_data())
 
     if isinstance(viber_request, ViberMessageRequest):
-        if viber_request.message.text == 'clue':
-            message = PictureMessage(media="https://github.com/lpmi-13/viberbot/blob/grammarbuffet/assets/locations/IMG_20170128_162050.jpg",text="find this place!")
-        elif viber_request.message.text == 'sentence':
-            message = TextMessage(text='its helpful to correct sentences.')
-        else:
-            message = TextMessage(text='have a keyboard!', keyboard=keyboardResponse) 
+
+       # if viber_request.message.text == 'clue':
+            #send out setence to correct
+       # else:
+        message = TextMessage(text=sentences) 
 
         viber.send_messages(viber_request.sender.id, [
             message
@@ -83,7 +88,7 @@ def incoming():
 
     elif isinstance(viber_request, ViberSubscribedRequest):
         viber.send_messages(viber_request.get_user.id, [
-            TextMessage(text='you are now subscribed to the madness!')
+            TextMessage(text='welcome to the sentence bot!')
         ])
     elif isinstance(viber_request, ViberFailedRequest):
         logger.warn('client failed receiving message. failure: {0}'.format(viber_request))
@@ -91,4 +96,4 @@ def incoming():
     return Response(status=200)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=5005) 
+    app.run(host='0.0.0.0',port=5006) 
