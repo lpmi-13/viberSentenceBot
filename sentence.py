@@ -26,7 +26,7 @@ logger.addHandler(handler)
 
 bot_configuration = BotConfiguration(
     name='Sentencebot',
-    avatar='http://cliparting.com/wp-content/uploads/2016/09/Robot-free-to-use-clipart-2.png'
+    avatar='http://cliparting.com/wp-content/uploads/2016/09/Robot-free-to-use-clipart-2.png',
     auth_token=os.environ['VIBER_SENTENCE_TOKEN']
 )
 
